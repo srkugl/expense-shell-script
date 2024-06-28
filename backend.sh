@@ -5,6 +5,22 @@ source ./common.sh
 check_root
 update_packages
 
+#!/bin/bash
+
+source ./common.sh
+
+check_root
+update_packages
+
+VALIDATE() {
+  if [ $1 -ne 0 ]; then
+    echo "Error: $2" | tee -a "$LOGFILE"
+    exit 1
+  else
+    echo "Success: $2" | tee -a "$LOGFILE"
+  fi
+}
+
 dnf install mysql -y >> "$LOGFILE" 2>&1
 VALIDATE $? "Installing MySQL client"
 
@@ -17,8 +33,14 @@ VALIDATE $? "Enabling NodeJS 20 module"
 dnf install nodejs -y >> "$LOGFILE" 2>&1
 VALIDATE $? "Installing NodeJS 20"
 
-useradd expense >> "$LOGFILE" 2>&1
-VALIDATE $? "Adding user 'expense'"
+# Check if the user 'expense' exists
+id expense &>/dev/null
+if [ $? -eq 0 ]; then
+  echo "User 'expense' already exists" | tee -a "$LOGFILE"
+else
+  useradd expense >> "$LOGFILE" 2>&1
+  VALIDATE $? "Adding user 'expense'"
+fi
 
 mkdir /app >> "$LOGFILE" 2>&1
 VALIDATE $? "Creating /app directory"
@@ -60,4 +82,4 @@ VALIDATE $? "Loading database schema"
 systemctl restart backend >> "$LOGFILE" 2>&1
 VALIDATE $? "Restarting backend service"
 
-echo -e "$G All tasks completed successfully! $N"
+echo -e "$G All tasks completed successfully! $N" | tee -a "$LOGFILE"
