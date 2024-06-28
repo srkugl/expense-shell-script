@@ -5,19 +5,19 @@ source ./common.sh
 check_root
 update_packages
 
-dnf install nginx -y >> $LOGFILE 2>&1
+dnf install nginx -y >> "$LOGFILE" 2>&1
 VALIDATE $? "Installing Nginx"
 
-systemctl enable nginx >> $LOGFILE 2>&1
+systemctl enable nginx >> "$LOGFILE" 2>&1
 VALIDATE $? "Enabling Nginx"
 
-systemctl start nginx >> $LOGFILE 2>&1
+systemctl start nginx >> "$LOGFILE" 2>&1
 VALIDATE $? "Starting Nginx"
 
-curl -I http://localhost | grep "200 OK" >> $LOGFILE 2>&1
+curl -I http://localhost | grep "200 OK" >> "$LOGFILE" 2>&1
 VALIDATE $? "Checking Nginx default content"
 
-rm -rf /usr/share/nginx/html/* >> $LOGFILE 2>&1
+rm -rf /usr/share/nginx/html/* >> "$LOGFILE" 2>&1
 VALIDATE $? "Removing default Nginx content"
 
 git clone https://github.com/srkugl/expense-frontend.git /usr/share/nginx/html >> "$LOGFILE" 2>&1
