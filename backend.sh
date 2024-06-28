@@ -5,13 +5,6 @@ source ./common.sh
 check_root
 update_packages
 
-#!/bin/bash
-
-source ./common.sh
-
-check_root
-update_packages
-
 VALIDATE() {
   if [ $1 -ne 0 ]; then
     echo "Error: $2" | tee -a "$LOGFILE"
@@ -42,8 +35,13 @@ else
   VALIDATE $? "Adding user 'expense'"
 fi
 
-mkdir /app >> "$LOGFILE" 2>&1
-VALIDATE $? "Creating /app directory"
+# Check if the /app directory exists
+if [ -d /app ]; then
+  echo "/app directory already exists" | tee -a "$LOGFILE"
+else
+  mkdir /app >> "$LOGFILE" 2>&1
+  VALIDATE $? "Creating /app directory"
+fi
 
 git clone https://github.com/srkugl/expense-backend.git /app >> "$LOGFILE" 2>&1
 VALIDATE $? "Cloning backend code from GitHub to /app directory"
