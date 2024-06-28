@@ -5,6 +5,14 @@ source ./common.sh
 check_root
 update_packages
 
+#!/bin/bash
+
+source ./common.sh
+
+check_root
+update_packages
+
+# Function to validate the exit status of a command
 VALIDATE() {
   if [ $1 -ne 0 ]; then
     echo "Error: $2" | tee -a "$LOGFILE"
@@ -36,15 +44,20 @@ else
 fi
 
 # Check if the /app directory exists
-if [ -d /app ]; then
+if [ -d "/app" ]; then
   echo "/app directory already exists" | tee -a "$LOGFILE"
 else
   mkdir /app >> "$LOGFILE" 2>&1
   VALIDATE $? "Creating /app directory"
 fi
 
-git clone https://github.com/srkugl/expense-backend.git /app >> "$LOGFILE" 2>&1
-VALIDATE $? "Cloning backend code from GitHub to /app directory"
+# Check if the repository is already cloned
+if [ -d "/app/.git" ]; then
+  echo "Repository already cloned in /app" | tee -a "$LOGFILE"
+else
+  git clone https://github.com/srkugl/expense-backend.git /app >> "$LOGFILE" 2>&1
+  VALIDATE $? "Cloning backend code from GitHub to /app directory"
+fi
 
 cd /app >> "$LOGFILE" 2>&1
 npm install >> "$LOGFILE" 2>&1
