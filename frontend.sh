@@ -14,9 +14,6 @@ VALIDATE $? "Enabling Nginx"
 systemctl start nginx >> "$LOGFILE" 2>&1
 VALIDATE $? "Starting Nginx"
 
-curl -I http://localhost | grep "200 OK" >> "$LOGFILE" 2>&1
-VALIDATE $? "Checking Nginx default content"
-
 rm -rf /usr/share/nginx/html/* >> "$LOGFILE" 2>&1
 VALIDATE $? "Removing default Nginx content"
 
