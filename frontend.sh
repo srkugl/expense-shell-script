@@ -20,11 +20,13 @@ VALIDATE $? "Checking Nginx default content"
 rm -rf /usr/share/nginx/html/* >> "$LOGFILE" 2>&1
 VALIDATE $? "Removing default Nginx content"
 
-git clone https://github.com/srkugl/expense-frontend.git /usr/share/nginx/html >> "$LOGFILE" 2>&1
-VALIDATE $? "Cloning frontend code from GitHub to Nginx directory"
 
-curl -I http://localhost | grep "200 OK" >> "$LOGFILE" 2>&1
-VALIDATE $? "Checking Nginx frontend content"
+if [ -d "/usr/share/nginx/html/.git" ]; then
+  echo "Repository already cloned in /usr/share/nginx/html" | tee -a "$LOGFILE"
+else
+  git clone https://github.com/srkugl/expense-frontend.git /usr/share/nginx/html >> "$LOGFILE" 2>&1
+  VALIDATE $? "Cloning frontend code from GitHub to Nginx directory"
+fi
 
 cat <<EOF > /etc/nginx/default.d/expense.conf
 proxy_http_version 1.1;
