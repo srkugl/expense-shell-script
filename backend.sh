@@ -5,6 +5,9 @@ source ./common.sh
 check_root
 update_packages
 
+dnf install mysql -y >> "$LOGFILE" 2>&1
+VALIDATE $? "Installing MySQL client"
+
 dnf module disable nodejs -y >> "$LOGFILE" 2>&1
 VALIDATE $? "Disabling default NodeJS module"
 
@@ -50,9 +53,6 @@ VALIDATE $? "Starting backend service"
 
 systemctl enable backend >> "$LOGFILE" 2>&1
 VALIDATE $? "Enabling backend service"
-
-dnf install mysql -y >> "$LOGFILE" 2>&1
-VALIDATE $? "Installing MySQL client"
 
 mysql -h expense.db.test.ullagallu.cloud -uroot -pExpenseApp@1 < /app/schema/backend.sql >> "$LOGFILE" 2>&1
 VALIDATE $? "Loading database schema"
