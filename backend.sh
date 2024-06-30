@@ -1,26 +1,8 @@
 #!/bin/bash
-
 source ./common.sh
 
 check_root
 update_packages
-
-#!/bin/bash
-
-source ./common.sh
-
-check_root
-update_packages
-
-# Function to validate the exit status of a command
-VALIDATE() {
-  if [ $1 -ne 0 ]; then
-    echo "Error: $2" | tee -a "$LOGFILE"
-    exit 1
-  else
-    echo "Success: $2" | tee -a "$LOGFILE"
-  fi
-}
 
 dnf install mysql -y >> "$LOGFILE" 2>&1
 VALIDATE $? "Installing MySQL client"
